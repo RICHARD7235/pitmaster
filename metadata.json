@@ -1,0 +1,5 @@
+{
+  "name": "L'Économe Pitmaster",
+  "description": "An intelligent purchasing assistant for restaurant stock management. It monitors stock levels, compares supplier prices, and suggests optimized orders using AI to prevent shortages and reduce costs.",
+  "requestFramePermissions": []
+}

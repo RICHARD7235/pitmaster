@@ -10,8 +10,12 @@ let stockImportHistory: StockImportRecord[] = [
     { id: 'si1', date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), fileName: 'inventaire_hebdo.xlsx', productsUpdated: 25 },
 ];
 let appSettings: AppSettings = {
-    apiKey: '',
+    provider: 'gemini',
+    apiKey: process.env.API_KEY || '',
     aiModel: 'gemini-2.5-flash',
+    geminiApiKey: process.env.API_KEY || '',
+    openaiApiKey: '',
+    anthropicApiKey: '',
 };
 
 const simulateDelay = (ms: number) => new Promise(res => setTimeout(res, ms));

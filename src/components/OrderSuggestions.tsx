@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Product, Supplier, AISuggestion, ShoppingCartItem, View } from '../types';
-import { generateOrderSuggestions } from '../services/geminiService';
+import { Product, Supplier, AISuggestion, ShoppingCartItem, View, AppSettings } from '../types';
+import { generateOrderSuggestions } from '../services/aiService';
 import { Icons } from './common/Icons';
 
 interface OrderSuggestionsProps {
@@ -9,10 +9,10 @@ interface OrderSuggestionsProps {
     suppliers: Supplier[];
     addToCart: (item: ShoppingCartItem) => void;
     onNavigate: (view: View) => void;
-    aiModel: string; // Add aiModel prop
+    settings: AppSettings; // Changed from aiModel to full settings
 }
 
-const OrderSuggestions: React.FC<OrderSuggestionsProps> = ({ lowStockProducts, suppliers, addToCart, onNavigate, aiModel }) => {
+const OrderSuggestions: React.FC<OrderSuggestionsProps> = ({ lowStockProducts, suppliers, addToCart, onNavigate, settings }) => {
     const [suggestions, setSuggestions] = useState<AISuggestion[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -22,8 +22,12 @@ const OrderSuggestions: React.FC<OrderSuggestionsProps> = ({ lowStockProducts, s
             setIsLoading(true);
             setError(null);
             try {
-                // Pass the selected AI model to the service
-                const result = await generateOrderSuggestions(lowStockProducts, suppliers, aiModel);
+                // Pass the AI configuration to the service
+                const result = await generateOrderSuggestions(lowStockProducts, suppliers, {
+                    provider: settings.provider,
+                    apiKey: settings.apiKey,
+                    model: settings.aiModel,
+                });
                 setSuggestions(result);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An unknown error occurred.');
@@ -33,7 +37,7 @@ const OrderSuggestions: React.FC<OrderSuggestionsProps> = ({ lowStockProducts, s
         } else {
             setSuggestions([]);
         }
-    }, [lowStockProducts, suppliers, aiModel]);
+    }, [lowStockProducts, suppliers, settings]);
 
     useEffect(() => {
         fetchSuggestions();

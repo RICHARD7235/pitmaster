@@ -69,9 +69,24 @@ export interface SaleItem {
 }
 
 // Added for app preferences page
+export type AIProvider = 'gemini' | 'openai' | 'anthropic';
+
+export type AIModel =
+    | 'gemini-2.5-flash'
+    | 'gemini-2.5-pro'
+    | 'gpt-4o'
+    | 'gpt-4o-mini'
+    | 'claude-3-5-sonnet-20241022'
+    | 'claude-3-5-haiku-20241022';
+
 export interface AppSettings {
+    provider: AIProvider;
     apiKey: string;
-    aiModel: 'gemini-2.5-flash' | 'gemini-2.5-pro';
+    aiModel: AIModel;
+    // Optional API keys for other providers
+    openaiApiKey?: string;
+    anthropicApiKey?: string;
+    geminiApiKey?: string;
 }
 
 // Added for stock import feature

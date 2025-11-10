@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { Product } from '../types';
-import Modal from './common/Modal';
+import { Product } from '../../types';
+import Modal from '../common/Modal';
 
 interface EditProductModalProps {
     product: Product | 'new' | null;

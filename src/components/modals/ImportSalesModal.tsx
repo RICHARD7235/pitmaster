@@ -1,8 +1,8 @@
 
 import React from 'react';
-import Modal from './common/Modal';
-import { Icons } from './common/Icons';
-import { SaleItem } from '../types';
+import Modal from '../common/Modal';
+import { Icons } from '../common/Icons';
+import { SaleItem } from '../../types';
 
 interface ImportSalesModalProps {
     isOpen: boolean;

@@ -70,40 +70,127 @@ Ce projet est conçu pour être facilement connecté à un véritable back-end.
 
 ## 🚀 Démarrage
 
-Ce projet est conçu pour fonctionner dans un environnement de développement en ligne et ne nécessite pas d'installation locale.
+### Installation Locale
+
+```bash
+# Cloner le repository
+git clone <repository-url>
+cd pitmaster
+
+# Installer les dépendances
+npm install
+
+# Configurer les variables d'environnement
+cp .env.example .env
+# Éditer .env avec vos clés API
+
+# Lancer le serveur de développement
+npm run dev
+```
 
 ### Configuration des Clés API
 
-Pour utiliser les fonctionnalités d'IA, vous devez configurer une clé API pour au moins un des providers supportés :
+⚠️ **Note de Sécurité** : Les clés API sont actuellement stockées côté client. Consultez [SECURITY.md](./SECURITY.md) pour les recommandations de production.
+
+Pour utiliser les fonctionnalités d'IA, créez un fichier `.env` à la racine :
+
+```bash
+# Copiez le fichier d'exemple
+cp .env.example .env
+```
+
+Puis ajoutez au moins une clé API :
 
 1. **Google Gemini** :
    - Obtenez votre clé sur : https://aistudio.google.com/apikey
-   - Variable d'environnement : `GEMINI_API_KEY`
+   - Variable : `VITE_GEMINI_API_KEY=votre_clé`
 
 2. **OpenAI** :
    - Obtenez votre clé sur : https://platform.openai.com/api-keys
-   - Variable d'environnement : `OPENAI_API_KEY`
+   - Variable : `VITE_OPENAI_API_KEY=votre_clé`
 
 3. **Anthropic Claude** :
    - Obtenez votre clé sur : https://console.anthropic.com/settings/keys
-   - Variable d'environnement : `ANTHROPIC_API_KEY`
+   - Variable : `VITE_ANTHROPIC_API_KEY=votre_clé`
 
-Vous pouvez également configurer les clés API directement depuis l'interface de l'application dans le panneau **Administration > Préférences**.
+Vous pouvez également configurer les clés API directement depuis l'interface dans **Administration > Préférences**.
+
+### Scripts Disponibles
+
+```bash
+npm run dev          # Lancer le serveur de développement
+npm run build        # Build de production
+npm run preview      # Prévisualiser le build
+npm run lint         # Vérifier le code avec ESLint
+npm run lint:fix     # Corriger automatiquement les erreurs ESLint
+npm run format       # Formater le code avec Prettier
+npm run format:check # Vérifier le formatage
+```
 
 ### Pour tester les différentes fonctionnalités :
 
-1.  Utilisez le sélecteur de profil en bas de la barre de navigation de gauche pour basculer entre les utilisateurs (`Jean Dupont` - Gérant, `Marie Curie` - Chef, `Pierre Martin` - Commis).
-2.  Observez comment la navigation et les boutons d'action (ex: "Passer Commande", "Modifier Stock") s'activent ou se désactivent en fonction du rôle.
-3.  En tant que `Gérant`, explorez le panneau "Administration" pour gérer les produits, les fournisseurs et les utilisateurs.
-4.  Allez dans **Administration > Préférences** pour choisir votre provider d'IA préféré et configurer votre clé API.
+1. **Changer de thème** : Cliquez sur l'icône soleil/lune en haut de la barre de navigation pour basculer entre mode clair et sombre
+2. **Changer d'utilisateur** : Utilisez le sélecteur en bas de la navigation pour tester les différents rôles :
+   - `Jean Dupont` - Gérant (accès complet)
+   - `Marie Curie` - Chef (validation commandes)
+   - `Pierre Martin` - Commis (gestion stocks)
+3. **Notifications** : Observez les toasts de confirmation pour chaque action
+4. **Administration** : En tant que Gérant, accédez au panneau Administration pour gérer produits, fournisseurs et préférences IA
 
-##  roadmap Évolutions Possibles
+## ✨ Nouvelles Fonctionnalités (v0.2)
 
-- [ ] **Développement d'un Back-End Réel** : Avec Node.js/Express et une base de données (ex: PostgreSQL) pour la persistance des données.
-- [ ] **Authentification Utilisateur** : Implémenter un système d'authentification sécurisé avec JWT.
-- [ ] **Intégration Directe avec les Systèmes de Caisse (POS)** : Pour une décrémentation des stocks entièrement automatisée.
-- [ ] **Notifications Push** : Alerter les utilisateurs sur mobile en cas de rupture de stock critique.
-- [ ] **Analyses et Prévisions Avancées** : Utiliser l'IA pour prévoir les besoins en stock en fonction de la saisonnalité, des événements ou des menus à venir.
+- ✅ **Mode Clair/Sombre** : Toggle dynamique avec persistance localStorage
+- ✅ **Notifications Toast** : Feedback visuel pour toutes les actions
+- ✅ **États de Chargement Améliorés** : Spinners et overlays réutilisables
+- ✅ **ESLint + Prettier** : Configuration stricte pour la qualité du code
+- ✅ **Variables d'Environnement Sécurisées** : Support Vite pour les API keys
+- ✅ **Documentation Sécurité** : Guide complet des meilleures pratiques
+
+## 📋 Roadmap Évolutions Possibles
+
+### Court Terme
+- [ ] **Tests Automatisés** : Vitest pour les tests unitaires, Playwright pour E2E
+- [ ] **Gestion d'État Centralisée** : Zustand ou React Context optimisé
+- [ ] **PWA Support** : Mode hors-ligne avec Service Workers
+- [ ] **Internationalisation** : Support multi-langues (FR/EN)
+
+### Moyen Terme
+- [ ] **Développement d'un Back-End** : Node.js/Express + PostgreSQL
+- [ ] **Authentification JWT** : Système d'authentification sécurisé
+- [ ] **WebSockets** : Collaboration temps réel multi-utilisateurs
+- [ ] **Analytics Dashboard** : Graphiques et prévisions avancées
+- [ ] **Export PDF/Excel** : Rapports de commandes et inventaires
+
+### Long Terme
+- [ ] **Intégration POS** : Connexion systèmes de caisse
+- [ ] **Notifications Push** : Alertes mobiles en temps réel
+- [ ] **ML Prévisions** : Prédiction des besoins par IA
+- [ ] **Multi-Restaurant** : Architecture SaaS complète
+
+## 🔒 Sécurité
+
+**Important** : Ce projet utilise actuellement un stockage côté client des clés API, adapté au développement uniquement.
+
+Pour la production, consultez [SECURITY.md](./SECURITY.md) pour :
+- Configuration backend proxy recommandée
+- Meilleures pratiques de sécurité
+- Checklist de déploiement production
+- Protection contre les vulnérabilités courantes
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! Avant de contribuer :
+
+1. Fork le projet
+2. Créez une branche (`git checkout -b feature/AmazingFeature`)
+3. Committez vos changements (`git commit -m 'Add AmazingFeature'`)
+4. Pushez vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
+
+Assurez-vous que :
+- Le code passe les linters (`npm run lint`)
+- Le formatage est correct (`npm run format:check`)
+- Les tests passent (quand implémentés)
 
 ## 📄 Licence
 

@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { Product, Supplier, Order, OrderItem, ShoppingCartItem, View, User, Role, SaleItem, AppSettings, StockImportRecord } from './types';
 import { MOCK_PRODUCTS, MOCK_SUPPLIERS, MOCK_USERS } from './data/mockData';
 import { Icons, type IconName } from './components/common/Icons';
+import { LoadingSpinner } from './components/common/LoadingSpinner';
 import Dashboard from './components/Dashboard';
 import StockList from './components/StockList';
 import SuppliersList from './components/SuppliersList';
@@ -13,8 +15,12 @@ import ImportCatalogModal from './components/modals/ImportCatalogModal';
 import ImportSalesModal from './components/modals/ImportSalesModal';
 import AdministrationPage from './pages/AdministrationPage';
 import * as api from './services/apiService';
+import { showSuccessToast, showErrorToast } from './utils/toast';
+import { useTheme } from './contexts/ThemeContext';
 
 const App: React.FC = () => {
+    const { theme, toggleTheme } = useTheme();
+
     // Core Data State
     const [products, setProducts] = useState<Product[]>([]);
     const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -77,17 +83,30 @@ const App: React.FC = () => {
 
     // Product Handlers
     const handleSaveProduct = useCallback(async (productToSave: Product) => {
-        const savedProduct = await api.saveProduct(productToSave);
-        if (productToSave.id) {
-            setProducts(prev => prev.map(p => p.id === savedProduct.id ? savedProduct : p));
-        } else {
-            setProducts(prev => [...prev, savedProduct]);
+        try {
+            const savedProduct = await api.saveProduct(productToSave);
+            if (productToSave.id) {
+                setProducts(prev => prev.map(p => p.id === savedProduct.id ? savedProduct : p));
+                showSuccessToast('Produit mis à jour avec succès');
+            } else {
+                setProducts(prev => [...prev, savedProduct]);
+                showSuccessToast('Produit ajouté avec succès');
+            }
+        } catch (error) {
+            showErrorToast('Erreur lors de la sauvegarde du produit');
+            console.error(error);
         }
     }, []);
 
     const handleDeleteProduct = useCallback(async (productId: string) => {
-        await api.deleteProduct(productId);
-        setProducts(prev => prev.filter(p => p.id !== productId));
+        try {
+            await api.deleteProduct(productId);
+            setProducts(prev => prev.filter(p => p.id !== productId));
+            showSuccessToast('Produit supprimé avec succès');
+        } catch (error) {
+            showErrorToast('Erreur lors de la suppression du produit');
+            console.error(error);
+        }
     }, []);
     
     // User Handlers
@@ -159,17 +178,28 @@ const App: React.FC = () => {
 
     const placeOrder = useCallback(async () => {
         if (shoppingCart.length === 0) return;
-        
-        const newOrders = await api.createOrdersFromCart(shoppingCart, products, suppliers);
 
-        setOrders(prev => [...prev, ...newOrders]);
-        setShoppingCart([]);
-        setActiveView('orders');
+        try {
+            const newOrders = await api.createOrdersFromCart(shoppingCart, products, suppliers);
+            setOrders(prev => [...prev, ...newOrders]);
+            setShoppingCart([]);
+            setActiveView('orders');
+            showSuccessToast(`${newOrders.length} commande(s) créée(s) avec succès`);
+        } catch (error) {
+            showErrorToast('Erreur lors de la création des commandes');
+            console.error(error);
+        }
     }, [shoppingCart, products, suppliers]);
     
     const handleSendOrder = useCallback(async (orderId: string) => {
-        const updatedOrder = await api.updateOrderStatus(orderId, 'Envoyée');
-        setOrders(prev => prev.map(o => o.id === orderId ? updatedOrder : o));
+        try {
+            const updatedOrder = await api.updateOrderStatus(orderId, 'Envoyée');
+            setOrders(prev => prev.map(o => o.id === orderId ? updatedOrder : o));
+            showSuccessToast('Commande envoyée au fournisseur');
+        } catch (error) {
+            showErrorToast('Erreur lors de l\'envoi de la commande');
+            console.error(error);
+        }
     }, []);
 
     const handleStartReception = useCallback((orderId: string) => {
@@ -178,16 +208,22 @@ const App: React.FC = () => {
     }, [orders]);
 
     const handleConfirmReception = useCallback(async (orderId: string, receivedItems: { productId: string, quantity: number }[]) => {
-        const { updatedOrder, updatedProducts } = await api.receiveOrderItems(orderId, receivedItems);
-        
-        setOrders(prevOrders => prevOrders.map(o => o.id === orderId ? updatedOrder : o));
-        
-        setProducts(prevProducts => {
-            const productsToUpdateMap = new Map(updatedProducts.map(p => [p.id, p]));
-            return prevProducts.map(p => productsToUpdateMap.get(p.id) || p);
-        });
+        try {
+            const { updatedOrder, updatedProducts } = await api.receiveOrderItems(orderId, receivedItems);
 
-        setReceivingOrder(null);
+            setOrders(prevOrders => prevOrders.map(o => o.id === orderId ? updatedOrder : o));
+
+            setProducts(prevProducts => {
+                const productsToUpdateMap = new Map(updatedProducts.map(p => [p.id, p]));
+                return prevProducts.map(p => productsToUpdateMap.get(p.id) || p);
+            });
+
+            setReceivingOrder(null);
+            showSuccessToast('Réception enregistrée, stocks mis à jour');
+        } catch (error) {
+            showErrorToast('Erreur lors de la réception de la commande');
+            console.error(error);
+        }
     }, []);
     
     const handleCancelOrder = useCallback(async (orderId: string) => {
@@ -217,14 +253,7 @@ const App: React.FC = () => {
     };
     
     if (isLoading || !currentUser) {
-        return (
-             <div className="flex h-screen items-center justify-center bg-gray-900">
-                <div className="flex flex-col items-center">
-                    <Icons name="spinner" className="h-12 w-12 animate-spin text-orange-500" />
-                    <p className="mt-4 text-lg font-semibold text-white">Chargement de l'application...</p>
-                </div>
-            </div>
-        )
+        return <LoadingSpinner fullScreen text="Chargement de l'application..." size="lg" />;
     }
 
     const renderFrontOffice = () => {
@@ -246,7 +275,7 @@ const App: React.FC = () => {
                 className={`w-full flex items-center p-3 rounded-lg transition-colors duration-200 ${
                     activeView === view && !isBackOfficeVisible
                         ? 'bg-orange-600 text-white shadow-lg'
-                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
                 <Icons name={icon} className="h-6 w-6 mr-3" />
@@ -291,23 +320,32 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="flex h-screen bg-gray-900 text-gray-100 font-sans">
-            <nav className="w-64 bg-gray-800 p-4 flex flex-col shadow-2xl">
-                <div className="flex items-center mb-8">
-                    <Icons name="flame" className="h-10 w-10 text-orange-500" />
-                    <h1 className="text-xl font-bold ml-2 text-white">L'Économe Pitmaster</h1>
+        <div className="flex h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-200">
+            <nav className="w-64 bg-white dark:bg-gray-800 p-4 flex flex-col shadow-2xl border-r border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center">
+                        <Icons name="flame" className="h-10 w-10 text-orange-500" />
+                        <h1 className="text-xl font-bold ml-2 text-gray-900 dark:text-white">L'Économe Pitmaster</h1>
+                    </div>
+                    <button
+                        onClick={toggleTheme}
+                        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        title={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
+                    >
+                        <Icons name={theme === 'dark' ? 'sun' : 'moon'} className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                    </button>
                 </div>
                 <ul>
                     {navLinks.filter(link => link.roles.includes(currentUser.role)).map(link => (
                         <NavItem key={link.view} {...link} />
                     ))}
                 </ul>
-                <div className="mt-auto p-4 bg-gray-900 rounded-lg">
+                <div className="mt-auto p-4 bg-gray-100 dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center mb-2">
-                      <Icons name="user" className="h-10 w-10 text-gray-500"/>
+                      <Icons name="user" className="h-10 w-10 text-gray-400 dark:text-gray-500"/>
                       <div className="ml-2">
-                        <p className="font-semibold">{currentUser.name}</p>
-                        <p className="text-sm text-orange-400 font-bold">{currentUser.role}</p>
+                        <p className="font-semibold text-gray-900 dark:text-white">{currentUser.name}</p>
+                        <p className="text-sm text-orange-500 dark:text-orange-400 font-bold">{currentUser.role}</p>
                       </div>
                     </div>
                     <select
@@ -320,7 +358,7 @@ const App: React.FC = () => {
                                 if(selectedUser.role !== 'Gérant') setBackOfficeVisible(false);
                             }
                         }}
-                        className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg py-1 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg py-1 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                        {users.map(user => (
                            <option key={user.id} value={user.id}>{user.name} ({user.role})</option>
@@ -328,7 +366,7 @@ const App: React.FC = () => {
                     </select>
                 </div>
             </nav>
-            <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-900">
+            <main className="flex-1 p-6 lg:p-8 overflow-y-auto bg-gray-50 dark:bg-gray-900">
                 {renderFrontOffice()}
             </main>
 
@@ -348,6 +386,8 @@ const App: React.FC = () => {
                 onClose={() => setSalesModalOpen(false)}
                 onConfirm={handleUpdateStockFromSales}
             />
+
+            <Toaster />
         </div>
     );
 };

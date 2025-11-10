@@ -3,6 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Product, Supplier, AISuggestion, ShoppingCartItem, View, AppSettings } from '../types';
 import { generateOrderSuggestions } from '../services/aiService';
 import { Icons } from './common/Icons';
+import { LoadingSpinner } from './common/LoadingSpinner';
+import { showErrorToast, showSuccessToast } from '../utils/toast';
 
 interface OrderSuggestionsProps {
     lowStockProducts: Product[];
@@ -29,8 +31,11 @@ const OrderSuggestions: React.FC<OrderSuggestionsProps> = ({ lowStockProducts, s
                     model: settings.aiModel,
                 });
                 setSuggestions(result);
+                showSuccessToast(`${result.length} suggestion(s) générée(s) avec succès`);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+                const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
+                setError(errorMessage);
+                showErrorToast('Erreur lors de la génération des suggestions');
             } finally {
                 setIsLoading(false);
             }
@@ -60,8 +65,8 @@ const OrderSuggestions: React.FC<OrderSuggestionsProps> = ({ lowStockProducts, s
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center h-full text-center bg-gray-800 p-6 rounded-xl shadow-lg">
-                <Icons name="spinner" className="h-16 w-16 text-orange-500 animate-spin mb-4" />
-                <h2 className="text-2xl font-bold text-white">L'agent intelligent analyse les besoins...</h2>
+                <LoadingSpinner size="xl" />
+                <h2 className="text-2xl font-bold text-white mt-6">L'agent intelligent analyse les besoins...</h2>
                 <p className="text-gray-400 mt-2">Comparaison des fournisseurs et optimisation des quantités en cours.</p>
             </div>
         );

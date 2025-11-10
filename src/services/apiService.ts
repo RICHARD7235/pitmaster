@@ -11,11 +11,11 @@ let stockImportHistory: StockImportRecord[] = [
 ];
 let appSettings: AppSettings = {
     provider: 'gemini',
-    apiKey: process.env.API_KEY || '',
+    apiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
     aiModel: 'gemini-2.5-flash',
-    geminiApiKey: process.env.API_KEY || '',
-    openaiApiKey: '',
-    anthropicApiKey: '',
+    geminiApiKey: import.meta.env.VITE_GEMINI_API_KEY || '',
+    openaiApiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
+    anthropicApiKey: import.meta.env.VITE_ANTHROPIC_API_KEY || '',
 };
 
 const simulateDelay = (ms: number) => new Promise(res => setTimeout(res, ms));

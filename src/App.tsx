@@ -31,8 +31,12 @@ const App: React.FC = () => {
 
     // App Settings State
     const [appSettings, setAppSettings] = useState<AppSettings>({
+        provider: 'gemini',
         apiKey: '',
         aiModel: 'gemini-2.5-flash',
+        geminiApiKey: '',
+        openaiApiKey: '',
+        anthropicApiKey: '',
     });
     
     // Modal States
@@ -228,7 +232,7 @@ const App: React.FC = () => {
             case 'dashboard': return <Dashboard lowStockCount={lowStockProducts.length} onNavigate={handleNavigate} orders={orders} suppliers={suppliers} products={products} />;
             case 'stock': return <StockList products={products} onUpdateStock={handleUpdateStock} role={currentUser.role} onImportSalesClick={() => setSalesModalOpen(true)} />;
             case 'suppliers': return <SuppliersList suppliers={suppliers} products={products} role={currentUser.role} onImportClick={() => setImportModalOpen(true)} />;
-            case 'suggestions': return <OrderSuggestions lowStockProducts={lowStockProducts} suppliers={suppliers} addToCart={addToCart} onNavigate={handleNavigate} aiModel={appSettings.aiModel} />;
+            case 'suggestions': return <OrderSuggestions lowStockProducts={lowStockProducts} suppliers={suppliers} addToCart={addToCart} onNavigate={handleNavigate} settings={appSettings} />;
             case 'cart': return <ShoppingCart cartItems={shoppingCart} products={products} suppliers={suppliers} onUpdateQuantity={updateCartItemQuantity} onPlaceOrder={placeOrder} role={currentUser.role} />;
             case 'orders': return <OrdersList orders={orders} role={currentUser.role} onStartReception={handleStartReception} onCancelOrder={handleCancelOrder} onSendOrder={handleSendOrder} />;
             default: return <Dashboard lowStockCount={lowStockProducts.length} onNavigate={handleNavigate} orders={orders} suppliers={suppliers} products={products}/>;

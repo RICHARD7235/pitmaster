@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Product, User, AppSettings, StockImportRecord, Supplier } from '../types';
-import { Icons } from './common/Icons';
-import ProductManagement from './ProductManagement';
-import UserManagement from './UserManagement';
+import { Icons } from '../components/common/Icons';
+import ProductManagement from '../components/ProductManagement';
+import UserManagement from '../components/UserManagement';
 import PreferencesPage from './PreferencesPage';
-import EditProductModal from './EditProductModal';
-import EditUserModal from './EditUserModal';
-import StockManagement from './StockManagement';
-import ImportStockModal from './ImportStockModal';
-import SupplierManagement from './SupplierManagement';
-import EditSupplierModal from './EditSupplierModal';
+import EditProductModal from '../components/modals/EditProductModal';
+import EditUserModal from '../components/modals/EditUserModal';
+import StockManagement from '../components/StockManagement';
+import ImportStockModal from '../components/modals/ImportStockModal';
+import SupplierManagement from '../components/SupplierManagement';
+import EditSupplierModal from '../components/modals/EditSupplierModal';
 
 
 interface AdministrationPageProps {

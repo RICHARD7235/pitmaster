@@ -8,10 +8,10 @@ import SuppliersList from './components/SuppliersList';
 import OrderSuggestions from './components/OrderSuggestions';
 import ShoppingCart from './components/ShoppingCart';
 import OrdersList from './components/OrdersList';
-import ReceiveOrderModal from './components/ReceiveOrderModal';
-import ImportCatalogModal from './components/ImportCatalogModal';
-import ImportSalesModal from './components/ImportSalesModal';
-import AdministrationPage from './components/AdministrationPage';
+import ReceiveOrderModal from './components/modals/ReceiveOrderModal';
+import ImportCatalogModal from './components/modals/ImportCatalogModal';
+import ImportSalesModal from './components/modals/ImportSalesModal';
+import AdministrationPage from './pages/AdministrationPage';
 import * as api from './services/apiService';
 
 const App: React.FC = () => {

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { Order } from '../types';
-import Modal from './common/Modal';
+import { Order } from '../../types';
+import Modal from '../common/Modal';
 
 interface ReceiveOrderModalProps {
     order: Order | null;

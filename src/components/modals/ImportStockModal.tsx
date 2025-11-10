@@ -1,8 +1,8 @@
 
 import React, { useState, useCallback } from 'react';
-import { Product } from '../types';
-import Modal from './common/Modal';
-import { Icons } from './common/Icons';
+import { Product } from '../../types';
+import Modal from '../common/Modal';
+import { Icons } from '../common/Icons';
 
 interface ImportStockModalProps {
     isOpen: boolean;

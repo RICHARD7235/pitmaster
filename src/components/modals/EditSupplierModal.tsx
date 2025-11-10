@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Supplier, SupplierProduct, Product } from '../types';
-import Modal from './common/Modal';
-import { Icons } from './common/Icons';
+import { Supplier, SupplierProduct, Product } from '../../types';
+import Modal from '../common/Modal';
+import { Icons } from '../common/Icons';
 
 interface EditSupplierModalProps {
     supplier: Supplier | 'new' | null;

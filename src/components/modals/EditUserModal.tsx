@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, Role } from '../types';
-import Modal from './common/Modal';
+import { User, Role } from '../../types';
+import Modal from '../common/Modal';
 
 interface EditUserModalProps {
     user: User | 'new' | null;

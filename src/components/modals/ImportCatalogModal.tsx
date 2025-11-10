@@ -1,7 +1,7 @@
 
 import React from 'react';
-import Modal from './common/Modal';
-import { Icons } from './common/Icons';
+import Modal from '../common/Modal';
+import { Icons } from '../common/Icons';
 
 interface ImportCatalogModalProps {
     isOpen: boolean;
